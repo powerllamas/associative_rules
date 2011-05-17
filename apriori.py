@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 from itertools import combinations
 
 from transactions import TransactionsDataSet
@@ -64,10 +64,10 @@ def count_items(transactions):
 
 
 def getL1(counter, minsup_count):
-    L1 = OrderedDict()
+    L1 = []
     for k, v in counter.iteritems():
         if v >= minsup_count:
-            L1[k] = v
+            L1.append(k)
     return L1
 
 
@@ -86,10 +86,10 @@ def collect_results(large_sets):
 
 
 def filter_candidates(candidate_set, counter, minsup_count):
-    filtered = set()
+    filtered = []
     for item in candidate_set:
         if counter[item] >= minsup_count:
-            filtered.add(item)
+            filtered.append(item)
     return filtered
 
 if __name__ == '__main__':
@@ -110,5 +110,6 @@ if __name__ == '__main__':
         current_iter += 1
     results = collect_results(large_sets)
     #print results
-    print_counter(counter)
+    print large_sets
+    #print_counter(counter)
 

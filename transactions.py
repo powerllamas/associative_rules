@@ -7,7 +7,7 @@ class TransactionsDataSet:
     def __init__(self, filename):
         with open(filename) as file:
             for line in file:
-                transaction = (int(x) for x in line.split())
+                transaction = tuple(int(x) for x in line.split())
                 self.transactions.append(transaction)
 
     def __iter__(self):
