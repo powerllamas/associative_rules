@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict, OrderedDict
+from itertools import combinations
 
 from transactions import TransactionsDataSet
 
@@ -21,18 +22,16 @@ def print_counter(counter):
 
 
 def apriori_gen(large_set):
-    L = OrderedDict()
-    items = large_set.keys()
-    if len(items) >= 2:
-        for x in xrange(len(items)-1):
-            item1, item2 = items[x:x+2]
+    L = []
+    if len(large_set) >= 2:
+        for item1, item2 in combinations(large_set, 2):
             if item1[:-1] == item2[:-1] and item1[-1] < item2[-1]:
                 candidate = item1[:] + item2[-1:]
-                L[candidate] = 0
-    for item in L.iterkeys():
+                L.append(candidate)
+    for item in L:
         subsets = get_subsets(item)
         if any([ x not in large_set for x in subsets ]):
-            del L[item]
+            L.remove(item)
     return L
 
 
@@ -45,14 +44,11 @@ def get_subsets(itemset):
     return subsets
 
 
-#FIXME: doesn't work as intended
 def generate_subsets(candidate_set, transaction):
-    subsets = set()
+    subsets = []
     for item in candidate_set:
-        #print item, transaction
         if all([ x in transaction for x in item ]):
-            subsets.add(item)
-    print subsets
+            subsets.append(item)
     return subsets
 
 def get_minsup_count():
