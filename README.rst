@@ -1,7 +1,7 @@
 ============
 Associative rules induction
 ============
-
+::
     usage: ar.py [-h] [-c, --confidence MINCONF] [-s, --support MINSUP] [-p, --profile] infile [outfile]
 
     Induction of associative rules from datasets.
