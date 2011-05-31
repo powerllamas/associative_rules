@@ -1,3 +1,7 @@
+============
+Associative rules induction
+============
+
 From build-in help::
     usage: ar.py [-h] [-c, --confidence MINCONF] [-s, --support MINSUP]
                 [-p, --profile]
