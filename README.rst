@@ -1,4 +1,4 @@
-::
+From build-in help::
     usage: ar.py [-h] [-c, --confidence MINCONF] [-s, --support MINSUP]
                 [-p, --profile]
                 infile [outfile]
