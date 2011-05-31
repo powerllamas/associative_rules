@@ -42,7 +42,7 @@ class TestAprioriGen(unittest.TestCase):
 class TestAprioriRules(unittest.TestCase):
 
     def setUp(self):
-        self.large_sets = [(1, ), (2, ), (3, ), (4, ), (1, 2), (2, 3), (2, 4), (3, 4), (2, 3, 4)]
+        self.large_sets = {1 : [(1, ), (2, ), (3, ), (4, )],  2 : [(1, 2), (2, 3), (2, 4), (3, 4)], 3 :  [(2, 3, 4)]}
         self.transactions = [(1, 2), (4, 2, 3), (1,), (1, 2, 3), (4, 2, 3)]
         self.minconf = 0.7
     
