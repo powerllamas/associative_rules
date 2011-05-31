@@ -1,25 +1,52 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 from collections import defaultdict
 from itertools import combinations
 
 from transactions import TransactionsDataSet
 
 minconf = 0.7
-minsup = 0.3
+minsup = 0.4
 filename = "data/mushroom.dat"
 
-large_sets = {}
-candidate_sets = {}
 
-transactions = TransactionsDataSet(filename)
+def process_args():
+    def percent_value(string):
+        val = float(string)
+        if 0.0 <= val <=1.0:
+            return val
+        else:
+            raise argparse.ArgumentTypeError("{0} is not from the range of 0..1".format(string))
 
-
-def print_counter(counter):
-    keys = counter.keys()
-    for key in sorted(keys):
-        print "{0}:\t{1}".format(key, counter[key])
-
+    parser = argparse.ArgumentParser(
+            description=u"Induction of associative rules from datasets.",
+            epilog=u"For current version check 'http://github.com/KrzysztofUrban/associative_rules'."
+        )
+    parser.add_argument('infile',
+            help=u"input file")
+    parser.add_argument('outfile',
+            nargs='?',
+            help=u"output file"
+        )
+    parser.add_argument('-c, --confidence',
+            dest='minconf',
+            type=percent_value,
+            default=0.7,
+            help=u"minimum confidence (0..1)"
+        )
+    parser.add_argument('-s, --support',
+            dest="minsup",
+            type=percent_value,
+            default=0.4,
+            help=u"minimum support (0..1)"
+        )
+    parser.add_argument('-p, --profile', 
+            dest="display_stats",
+            action='store_true', 
+            help=u"display time and memory statistics"
+        )
+    return parser.parse_args()
 
 def apriori_gen(large_set):
     L = []
@@ -93,6 +120,11 @@ def filter_candidates(candidate_set, counter, minsup_count):
     return filtered
 
 if __name__ == '__main__':
+
+    args = process_args()
+    large_sets = {}
+    candidate_sets = {}
+    transactions = TransactionsDataSet(filename)
     counter = count_items(transactions)
     minsup_count = get_minsup_count()
     L1 = getL1(counter, minsup_count)
@@ -100,7 +132,6 @@ if __name__ == '__main__':
     current_iter = 2
     while not is_last_set_empty(large_sets):
         C = apriori_gen(large_sets[current_iter-1])
-        #print C
         for transaction in transactions:
             subset = generate_subsets(C, transaction)
             for item in subset:
@@ -109,7 +140,5 @@ if __name__ == '__main__':
         large_sets[current_iter] = L
         current_iter += 1
     results = collect_results(large_sets)
-    #print results
     print large_sets
-    #print_counter(counter)
 
