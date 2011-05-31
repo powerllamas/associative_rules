@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
-from sets import Set
+from sets import Set, ImmutableSet
 from itertools import combinations
 
 class Apriori:
@@ -30,9 +30,9 @@ class Apriori:
             large_sets[current_iter] = large_set
             current_iter += 1
         return large_sets
-		
-	def get_rules(self):
-		return __generate_rules(L, self.__minconf, self.__transactions)
+        
+    def get_rules(self, L):
+        return self.__generate_rules(L, self.__minconf, self.__transactions)
 
     @staticmethod
     def __count_items_in_transactions(transactions):
@@ -122,19 +122,22 @@ class Apriori:
                 filtered.append(item)
         return filtered
 
-	
-	
-	
-	@staticmethod
+    
+    
+    
+    @staticmethod
     def __generate_rules(L, minconf, transactions):
         rules = []
         for large_set in L:
-            subsets = _get_all_subsets(large_set)
-            for subset in subsets:
-                antecedent = Set(subset)
-                consequent = large_set - antecedent
-                if _get_confidence(antecent, consequent, transactions) >= minconf:
-                    rules.append((antecent, consequent))
+            if(len(large_set) >= 2):
+                subsets = Apriori._Apriori__get_all_subsets(large_set)
+                for subset in subsets:
+                    antecedent = ImmutableSet(subset)
+                    consequent = ImmutableSet(large_set).difference(antecedent)
+                    conf = Apriori._Apriori__get_confidence(antecedent, consequent, transactions)
+                    if  conf >= minconf:
+                        rules.append((antecedent, consequent))
+                       # print "%s --> %s | %f" % (antecedent, consequent, conf)
         return rules
 
     @staticmethod
@@ -146,15 +149,16 @@ class Apriori:
         return subsets
     
     @staticmethod
-    def __get_confidence(antecent, consequent, transactions):
-        antecent_counter = 0
+    def __get_confidence(antecedent, consequent, transactions):
+        antecedent_counter = 0
         both_counter = 0
         for transaction in transactions:
-            if antecent in transaction:
-                antecent_counter += 1
-                if consequent in transaction:
-                both_counter += 1
-        if antecent_counter > 0:
-            return both_counter / antecent_counter
-        else
+            transaction_set = Set(transaction)
+            if antecedent.issubset(transaction_set):
+                antecedent_counter += 1
+                if consequent.issubset(transaction_set):
+                    both_counter += 1
+        if antecedent_counter > 0:
+            return float(both_counter) / float(antecedent_counter)
+        else:
             return 0
