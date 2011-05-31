@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
+from sets import Set
 from itertools import combinations
 
 class Apriori:
@@ -34,6 +35,39 @@ class Apriori:
             if all([ x in transaction for x in item ]):
                 subsets.append(item)
         return subsets
+
+   
+	@classmethod
+    def _get_rules(self, L):
+        rules = []
+		for large_set in L:
+			subsets = _get_all_subsets(large_set)
+			for subset in subsets:
+				antecedent = Set(subset)
+				consequent = large_set - antecedent
+				if _get_confidence(antecent, consequent) >= self._minconf:
+					rules.append((antecent, consequent))
+		return rules
+
+    def _get_all_subsets(set):
+        subsets = []
+        length = len(set)
+        for i in range(1,length):
+            subsets.extend(combinations(set, i))
+		return subsets
+
+	def _get_confidence(antecent, consequent):
+		antecent_counter = 0
+		both_counter = 0
+		for transaction in self.__transactions:
+			if antecent in transaction:
+				antecent_counter += 1
+				if consequent in transaction:
+				both_counter += 1
+		if antecent_counter > 0:
+			return both_counter / antecent_counter
+		else
+			return 0
 
     def _count_items_in_transactions(self):
         counter = defaultdict(int)
