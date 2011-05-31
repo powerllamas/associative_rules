@@ -30,6 +30,9 @@ class Apriori:
             large_sets[current_iter] = large_set
             current_iter += 1
         return large_sets
+		
+	def get_rules(self):
+		return __generate_rules(L, self.__minconf, self.__transactions)
 
     @staticmethod
     def __count_items_in_transactions(transactions):
@@ -118,3 +121,40 @@ class Apriori:
             if counter[item] >= minsup_count:
                 filtered.append(item)
         return filtered
+
+	
+	
+	
+	@staticmethod
+    def __generate_rules(L, minconf, transactions):
+        rules = []
+        for large_set in L:
+            subsets = _get_all_subsets(large_set)
+            for subset in subsets:
+                antecedent = Set(subset)
+                consequent = large_set - antecedent
+                if _get_confidence(antecent, consequent, transactions) >= minconf:
+                    rules.append((antecent, consequent))
+        return rules
+
+    @staticmethod
+    def __get_all_subsets(set):
+        subsets = []
+        length = len(set)
+        for i in range(1,length):
+            subsets.extend(combinations(set, i))
+        return subsets
+    
+    @staticmethod
+    def __get_confidence(antecent, consequent, transactions):
+        antecent_counter = 0
+        both_counter = 0
+        for transaction in transactions:
+            if antecent in transaction:
+                antecent_counter += 1
+                if consequent in transaction:
+                both_counter += 1
+        if antecent_counter > 0:
+            return both_counter / antecent_counter
+        else
+            return 0
