@@ -2,6 +2,8 @@
 
 import argparse
 
+from stats import is_posix
+
 def process_args():
     def percent_value(string):
         val = float(string)
@@ -32,9 +34,10 @@ def process_args():
             default=0.4,
             help=u"minimum support (0..1)"
         )
-    parser.add_argument('-p, --profile', 
-            dest="display_stats",
-            action='store_true', 
-            help=u"display time and memory statistics"
-        )
+    if is_posix():
+        parser.add_argument('-p, --profile', 
+                dest="display_stats",
+                action='store_true', 
+                help=u"display time and memory statistics"
+            )
     return parser.parse_args()

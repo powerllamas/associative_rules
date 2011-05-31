@@ -3,6 +3,7 @@
 from transactions import TransactionsList
 from args import process_args
 from apriori import Apriori
+from stats import is_posix, get_stats
 
 def main(args):
     transactions = TransactionsList(args.infile)
@@ -11,7 +12,10 @@ def main(args):
 
 if __name__ == '__main__':
     args = process_args()
-    if args.display_stats:
-        pass
+    stats = []
+    if is_posix() and args.display_stats:
+        main = get_stats(stats)(main)
     main(args)
+    if stats:
+        print stats
 
