@@ -4,7 +4,6 @@ import os
 import functools
 
 def is_posix():
-    return False
     return os.name == 'posix'
 
 def get_stats(storage):
@@ -13,7 +12,9 @@ def get_stats(storage):
             import resource
             @functools.wraps(function)
             def wrapper(*args, **kwargs):
+                storage.append(resource.getrusage(resource.RUSAGE_SELF))
                 result = function(*args, **kwargs)
+                storage.append(resource.getrusage(resource.RUSAGE_SELF))
                 return result
             return wrapper
         else:
