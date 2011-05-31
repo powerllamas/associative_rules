@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class TransactionsDataSet:
+class TransactionsList:
     transactions = []
 
     def __init__(self, filename):
