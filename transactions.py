@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-
 class TransactionsList:
-    transactions = []
 
     def __init__(self, filename):
+        self.transactions = []
         with open(filename) as file:
             for line in file:
                 transaction = tuple(int(x) for x in line.split())
