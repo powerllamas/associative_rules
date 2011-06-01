@@ -5,6 +5,7 @@ from args import process_args
 from apriori import Apriori
 from stats import get_stats
 from rules import RulesGenerator
+from writer import Writer
 
 stats = []
 @get_stats(stats)
@@ -17,6 +18,9 @@ def main(args):
     print large_sets
     print "Rules:"
     print rules
+    writer = Writer(args.outfile)
+    writer.add_args(args)
+    writer.write()
 
 if __name__ == '__main__':
     args = process_args()
