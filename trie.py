@@ -1,7 +1,10 @@
-min_supp = 0.7
+#TODO: wywo�ywanie update_node_status() gdy wszystkie bezpo�rednie podzbiory s� cz�ste
+
+min_supp_count = 1
 
 class Node:
-    def __init__(self, level):
+    def __init__(self, item, level):
+        self.item = item
         self.counter = 0
         self.branches = {}
         self.large = None
@@ -9,30 +12,22 @@ class Node:
         self.position = 0;
         self.large_subsets_counter = 0
         self.level = level
+        self.size_changed = False
         if level == 1:
             self.large = False
             self.suspected = True
         
-    def increment(self, transaction, count_subset, position):
-        size_changed = False
+    def increment(self, transaction, position):
         if self.suspected:
             if(self.counter == 0):
                 self.position = position
             self.counter += 1
-            if(self.large != True and self.counter >= min_supp):
+            if(self.large != True and self.counter >= min_supp_count):
                 self.large = True
-                size_changed = True
+                self.size_changed = True
         if self.suspected != None and len(transaction) > 0:
             for i in range(len(transaction)):
-                self.branches.setdefault(transaction[i], Node(self.level + 1)).increment(transaction[i+1:], size_changed, position)
-        elif self.suspected == None and count_subset:
-            #TODO: sprawdzanie czy wszystkie bezpośrednie podziory są częste
-            #Zbiór n-elementowy ma n bezpośrednich podzbiorów (podzbiorów n-1 elementowych)
-            #dlatego utrzymujemy licznik częstych bezpośrednich podzbiorów każdego zbioru
-            self.large_subsets_counter += 1
-            if self.large_subsets_counter == self.level:
-                self.large = False
-                self.suspected = True
+                self.branches.setdefault(transaction[i], Node(transaction[i], self.level + 1)).increment(transaction[i+1:], position)
 
     def print_node(self):
         for key in self.branches:
@@ -40,6 +35,11 @@ class Node:
                 print "\t",
             print "%s: [%d, %s, %s]" % (key, self.branches[key].counter, self.branches[key].suspected, self.branches[key].large)
             self.branches[key].print_node()
+
+    def update_node_status():
+        self.large = False
+        self.suspected = True
+        
             
 class Root(Node):
     def __init__(self):
@@ -49,6 +49,8 @@ class Root(Node):
         self.suspected = False
         self.position = 0;
         self.level = 0
+
+            
 
 tree = Root()
 tr = ['A', 'B', 'C']
