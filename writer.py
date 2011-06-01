@@ -30,10 +30,18 @@ Confidence: {conf}
         pass
 
     def add_stats(self, stats):
-        self.__data['real_time'] = stats.real_time
-        self.__data['user_time'] = stats.user_time
-        self.__data['set_gen_time'] = stats.set_gen_time
-        self.__data['memory_use'] = stats.memory_use
+        self.__data['real_time'] = Writer.__parse_time(stats.real_time)
+        self.__data['user_time'] = Writer.__parse_time(stats.user_time)
+        self.__data['set_gen_time'] = Writer.__parse_time(stats.set_gen_time)
+        self.__data['memory_use'] = Writer.__parse_memory(stats.memory_use)
+
+    @staticmethod
+    def __parse_memory(memory):
+        return str(memory/(1024.0*1024.0)) + " Mb"
+
+    @staticmethod
+    def __parse_time(time):
+        return str(time) + " s"
 
     def add_args(self, args):
         self.__data['infile'] = args.infile
