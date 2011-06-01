@@ -8,7 +8,7 @@ class Apriori:
         self.__minsup = minsup
         self.__transactions = transactions
 
-    def get_large_sets(self):
+    def get_large_sets_and_counter(self):
         """
         Calculates large sets from transactions. Returns dictionary where the key is arity and the value is list of item sets.
         """
@@ -27,7 +27,7 @@ class Apriori:
             large_set = self.__filter_candidates(candidate_set, counter, minsup_count)
             large_sets[current_iter] = large_set
             current_iter += 1
-        return large_sets
+        return large_sets, counter
 
     @staticmethod
     def __count_items_in_transactions(transactions):

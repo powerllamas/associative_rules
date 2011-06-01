@@ -79,10 +79,11 @@ Confidence: {confidence}
     @staticmethod
     def __format_rule(nr, rule):
         data = defaultdict(lambda: u"<missing>")
-        antecedent, consequent, confidence = rule
+        antecedent, consequent, support, confidence = rule
         data['nr'] = nr
         data['antecedent'] = " AND ".join(str(x) for x in antecedent)
         data['consequent'] = " AND ".join(str(x) for x in consequent)
+        data['support'] = support
         data['confidence'] = confidence
         rule_string = Writer.dictformat(Writer.__rules_template, data)
         return rule_string

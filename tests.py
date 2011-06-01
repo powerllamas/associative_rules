@@ -43,13 +43,39 @@ class TestAprioriRules(unittest.TestCase):
 
     def setUp(self):
         self.large_sets = {1 : [(1, ), (2, ), (3, ), (4, )],  2 : [(1, 2), (2, 3), (2, 4), (3, 4)], 3 :  [(2, 3, 4)]}
-        self.transactions = [(1, 2), (4, 2, 3), (1,), (1, 2, 3), (4, 2, 3)]
+        self.transactions = [(1, 2), (2, 3, 4), (1,), (1, 2, 3), (2, 3, 4)]
         self.minconf = 0.7
+        self.counter = {
+                (1,): 3,
+                (2,): 4,
+                (3,): 3,
+                (4,): 2,
+                (1, 2): 2,
+                (1, 3): 1,
+                (1, 4): 0,
+                (2, 3): 3,
+                (2, 4): 2,
+                (3, 4): 2,
+                (1, 2, 3): 1,
+                (1, 2, 4): 0,
+                (1, 3, 4): 0,
+                (2, 3, 4): 1,
+            }
     
     def testAprioriRules(self):
-        result = RulesGenerator.generate_rules(self.large_sets, self.minconf, self.transactions)
-        expected = [(frozenset([4]), frozenset([3])), (frozenset([3]), frozenset([2])), (frozenset([2]), frozenset([3])), (frozenset([4]), frozenset([2])), (frozenset([4, 3]), frozenset([2])), (frozenset([4, 2]), frozenset([3])), (frozenset([4]), frozenset([3, 2]))]
-        self.assertEqual(frozenset(result), frozenset(expected))
+        extract = lambda x: (x[0], tuple(x[1]))
+        result = RulesGenerator.generate_rules(self.large_sets, self.minconf, self.counter, self.transactions)
+        result = [ extract(x) for x in result ]
+        expected = [
+                ((2,), (3,)), #conf=0.75
+                ((3,), (2,)), #conf=1.0
+                ((4,), (2,)), #conf=1.0
+                ((4,), (3,)), #conf=1.0
+                #((4,), (2, 3)), #conf=0.5
+                #((2, 4), (3,)), #conf=0.5
+                #((3, 4), (2,)), #conf=0.5
+            ]
+        self.assertEqual(result, expected)
         
 class TestGetAllSubsets(unittest.TestCase):
 

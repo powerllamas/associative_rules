@@ -7,40 +7,33 @@ class RulesGenerator:
         pass
 
     @staticmethod
-    def generate_rules(large_sets, minconf, transactions):
+    def generate_rules(large_sets, minconf, counter, transactions):
         rules = []
         for large_sets_k in large_sets.values():
             for large_set in large_sets_k:
                 if(len(large_set) >= 2):
                     subsets = RulesGenerator.__get_all_subsets(large_set)
                     for subset in subsets:
-                        antecedent = frozenset(subset)
-                        consequent = frozenset(large_set).difference(antecedent)
-                        conf = RulesGenerator.__get_confidence(antecedent, consequent, transactions)
+                        antecedent = subset
+                        conf = RulesGenerator.__get_confidence(large_set, antecedent, counter)
                         if  conf >= minconf:
-                            rules.append((antecedent, consequent, conf))
-                           # print "%s --> %s | %f" % (antecedent, consequent, conf)
+                            consequent = RulesGenerator.__tuples_difference(large_set, antecedent)
+                            supp = float(counter[large_set]) / float(len(transactions))
+                            rules.append((antecedent, consequent, supp, conf))
         return rules
 
     @staticmethod
-    def __get_all_subsets(set):
+    def __get_all_subsets(large_set):
         subsets = []
-        length = len(set)
+        length = len(large_set)
         for i in range(1,length):
-            subsets.extend(combinations(set, i))
+            subsets.extend(combinations(large_set, i))
         return subsets
-    
+
     @staticmethod
-    def __get_confidence(antecedent, consequent, transactions):
-        antecedent_counter = 0
-        both_counter = 0
-        for transaction in transactions:
-            transaction_set = set(transaction)
-            if antecedent.issubset(transaction_set):
-                antecedent_counter += 1
-                if consequent.issubset(transaction_set):
-                    both_counter += 1
-        if antecedent_counter > 0:
-            return float(both_counter) / float(antecedent_counter)
-        else:
-            return 0
+    def __tuples_difference(large_set, subset):
+        return (x for x in large_set if x not in subset)
+
+    @staticmethod
+    def __get_confidence(large_set, antecedent, counter):
+        return float(counter[large_set]) / float(counter[antecedent])

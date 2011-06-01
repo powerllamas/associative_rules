@@ -11,9 +11,9 @@ def main(args):
     stats = Stats()
     transactions = TransactionsList(args.infile)
     apriori = Apriori(transactions, args.minsup)
-    large_sets = apriori.get_large_sets()
+    large_sets, counter = apriori.get_large_sets_and_counter()
     stats.record_post_large_sets()
-    rules = RulesGenerator.generate_rules(large_sets, args.minconf, transactions)
+    rules = RulesGenerator.generate_rules(large_sets, args.minconf, counter, transactions)
     stats.record_post_rules()
 
     writer = Writer(args.outfile)
