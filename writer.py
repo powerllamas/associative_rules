@@ -5,21 +5,21 @@ from string import Formatter
 
 class Writer:
     __header_template = u"""
-Dane: {infile}
-Min sup: {minsup}
-Min conf: {minconf}
-No of rules: {nr_of_rules}
-Pamiec: {memory_use}
-Calkowity czas: {real_time}
-Czas bez we/wy: {user_time}
-Czas generowania zb. cz.: {set_gen_time}
+Data set:                   {infile}
+Minimum support:            {minsup}
+Minimum confidence:         {minconf}
+Number of rules:            {nr_of_rules}
+Memory usage:               {memory_use}
+Total time:                 {real_time}
+User time:                  {user_time}
+Large sets generation time: {set_gen_time}
 
 **RULES
 """
 
     __rules_template = u"""
-{nr}: {antecedent} => {consequent}
-Support: {support}
+#{nr}: {antecedent} => {consequent}
+Support:    {support}
 Confidence: {confidence}
 """
 
