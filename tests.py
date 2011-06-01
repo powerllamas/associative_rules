@@ -3,7 +3,7 @@
 import unittest
 
 from apriori import Apriori
-from sets import Set, ImmutableSet
+from rules import RulesGenerator
 
 class TestAprioriGenerateSubsets(unittest.TestCase):
 
@@ -47,17 +47,17 @@ class TestAprioriRules(unittest.TestCase):
         self.minconf = 0.7
     
     def testAprioriRules(self):
-        result = Apriori._Apriori__generate_rules(self.large_sets, self.minconf, self.transactions)
-        expected = [(ImmutableSet([4]), ImmutableSet([3])), (ImmutableSet([3]), ImmutableSet([2])), (ImmutableSet([2]), ImmutableSet([3])), (ImmutableSet([4]), ImmutableSet([2])), (ImmutableSet([4, 3]), ImmutableSet([2])), (ImmutableSet([4, 2]), ImmutableSet([3])), (ImmutableSet([4]), ImmutableSet([3, 2]))]
-        self.assertEqual(ImmutableSet(result), ImmutableSet(expected))
+        result = RulesGenerator.generate_rules(self.large_sets, self.minconf, self.transactions)
+        expected = [(frozenset([4]), frozenset([3])), (frozenset([3]), frozenset([2])), (frozenset([2]), frozenset([3])), (frozenset([4]), frozenset([2])), (frozenset([4, 3]), frozenset([2])), (frozenset([4, 2]), frozenset([3])), (frozenset([4]), frozenset([3, 2]))]
+        self.assertEqual(frozenset(result), frozenset(expected))
         
 class TestGetAllSubsets(unittest.TestCase):
 
     def setUp(self):
-        self.set = Set([1, 2, 3])
+        self.set = set([1, 2, 3])
     
     def testGetAllSubsets(self):
-        result = Apriori._Apriori__get_all_subsets(self.set)
+        result = RulesGenerator._RulesGenerator__get_all_subsets(self.set)
         expected = [(1,), (2,), (3,), (1, 2), (2, 3), (1, 3)]
         self.assertEqual(sorted(result), sorted(expected))
 
