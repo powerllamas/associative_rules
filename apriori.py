@@ -28,7 +28,7 @@ class Apriori:
             large_sets[current_iter] = large_set
             current_iter += 1
         return large_sets
-        
+
     @staticmethod
     def __count_items_in_transactions(transactions):
         """

@@ -1,4 +1,6 @@
-#TODO: wywo³ywanie update_node_status() gdy wszystkie bezpoœrednie podzbiory s¹ czêste
+# -*- coding: utf-8 -*-
+
+#TODO: wywo¿ywanie update_node_status() gdy wszystkie bezpo¿rednie podzbiory s¿ cz¿ste
 
 min_supp_count = 1
 
@@ -16,7 +18,7 @@ class Node:
         if level == 1:
             self.large = False
             self.suspected = True
-        
+
     def increment(self, transaction, position):
         if self.suspected:
             if(self.counter == 0):
@@ -36,11 +38,11 @@ class Node:
             print "%s: [%d, %s, %s]" % (key, self.branches[key].counter, self.branches[key].suspected, self.branches[key].large)
             self.branches[key].print_node()
 
-    def update_node_status():
+    def update_node_status(self):
         self.large = False
         self.suspected = True
-        
-            
+
+
 class Root(Node):
     def __init__(self):
         self.counter = 0
@@ -50,7 +52,7 @@ class Root(Node):
         self.position = 0;
         self.level = 0
 
-            
+
 
 tree = Root()
 tr = ['A', 'B', 'C']
