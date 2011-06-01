@@ -5,32 +5,35 @@ from string import Formatter
 
 class Writer:
     __header_template = u"""
-    Dane: {infile}
-    Min sup: {minsup}
-    Min conf: {minconf}
-    No of rules: {nr_of_rules}
-    Pamiec: {memory_use}
-    Calkowity czas: {total_time}
-    Czas bez we/wy: {user_time}
-    Czas generowania zb. cz.: {set_gen_time}
+Dane: {infile}
+Min sup: {minsup}
+Min conf: {minconf}
+No of rules: {nr_of_rules}
+Pamiec: {memory_use}
+Calkowity czas: {real_time}
+Czas bez we/wy: {user_time}
+Czas generowania zb. cz.: {set_gen_time}
 
-    **RULES
-    """
+**RULES
+"""
 
     __rules_template = u"""
-    {nr}: {rule}
-    Support: {sup}
-    Confidence: {conf}
-    """
+{nr}: {rule}
+Support: {sup}
+Confidence: {conf}
+"""
     def __init__(self, filename=None):
         self.__filename = filename
         self.__data = defaultdict(lambda: u"<missing>")
 
-    def add_rules(rules):
+    def add_rules(self, rules):
         pass
 
-    def add_stats(stats):
-        pass
+    def add_stats(self, stats):
+        self.__data['real_time'] = stats.real_time
+        self.__data['user_time'] = stats.user_time
+        self.__data['set_gen_time'] = stats.set_gen_time
+        self.__data['memory_use'] = stats.memory_use
 
     def add_args(self, args):
         self.__data['infile'] = args.infile
