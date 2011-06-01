@@ -18,16 +18,19 @@ Czas generowania zb. cz.: {set_gen_time}
 """
 
     __rules_template = u"""
-{nr}: {rule}
-Support: {sup}
-Confidence: {conf}
+{nr}: {antecedent} => {consequent}
+Support: {support}
+Confidence: {confidence}
 """
+
     def __init__(self, filename=None):
         self.__filename = filename
         self.__data = defaultdict(lambda: u"<missing>")
+        self.__rules = []
 
     def add_rules(self, rules):
-        pass
+        self.__rules = rules
+        self.__data['nr_of_rules'] = len(rules)
 
     def add_stats(self, stats):
         self.__data['real_time'] = Writer.__parse_time(stats.real_time)
@@ -53,10 +56,33 @@ Confidence: {conf}
         if self.__filename is not None:
             with open(self.__filename, 'w') as file:
                 file.write(header)
+                if not self.__rules:
+                    file.write(u"<empty>")
+                else:
+                    for nr, rule in enumerate(self.__rules, start=1):
+                        rule_string = Writer.__format_rule(nr, rule)
+                        file.write(rule_string)
         else:
-            print header
+            print header,
+            if not self.__rules:
+                print u"<empty>",
+            else:
+                for nr, rule in enumerate(self.__rules, start=1):
+                    rule_string = Writer.__format_rule(nr, rule)
+                    print rule_string,
 
     @staticmethod
     def dictformat(string, dictionary):
         formatter = Formatter()
         return formatter.vformat(string, (), dictionary)
+
+    @staticmethod
+    def __format_rule(nr, rule):
+        data = defaultdict(lambda: u"<missing>")
+        antecedent, consequent, confidence = rule
+        data['nr'] = nr
+        data['antecedent'] = " AND ".join(str(x) for x in antecedent)
+        data['consequent'] = " AND ".join(str(x) for x in consequent)
+        data['confidence'] = confidence
+        rule_string = Writer.dictformat(Writer.__rules_template, data)
+        return rule_string

@@ -18,7 +18,7 @@ class RulesGenerator:
                         consequent = frozenset(large_set).difference(antecedent)
                         conf = RulesGenerator.__get_confidence(antecedent, consequent, transactions)
                         if  conf >= minconf:
-                            rules.append((antecedent, consequent))
+                            rules.append((antecedent, consequent, conf))
                            # print "%s --> %s | %f" % (antecedent, consequent, conf)
         return rules
 
