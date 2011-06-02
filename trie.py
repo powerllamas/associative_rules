@@ -1,35 +1,40 @@
-# -*- coding: utf-8 -*-
+ï»¿# -*- coding: utf-8 -*-
 
-#TODO: wywo¿ywanie update_node_status() gdy wszystkie bezpo¿rednie podzbiory s¿ cz¿ste
+#TODO:  wywoÅ‚ywanie update_node_status() gdy wszystkie bezpoÅ¼rednie podzbiory sÄ… czÄ™ste
 
 min_supp_count = 1
 
 class Node:
-    def __init__(self, item, level):
+    def __init__(self, item, level, position):
         self.item = item
         self.counter = 0
         self.branches = {}
         self.large = None
         self.suspected = None
-        self.position = 0;
         self.large_subsets_counter = 0
         self.level = level
-        self.size_changed = False
+        self.beginning_position = position
+        self.first_pass = True
         if level == 1:
             self.large = False
             self.suspected = True
 
     def increment(self, transaction, position):
+        
+        if position > self.beginning_position:
+            self.first_pass = False
+        if position == self.beginning_position and not self.first_pass:
+            self.suspected = False
+        finished = True
+        
         if self.suspected:
-            if(self.counter == 0):
-                self.position = position
             self.counter += 1
             if(self.large != True and self.counter >= min_supp_count):
                 self.large = True
-                self.size_changed = True
         if self.suspected != None and len(transaction) > 0:
             for i in range(len(transaction)):
-                self.branches.setdefault(transaction[i], Node(transaction[i], self.level + 1)).increment(transaction[i+1:], position)
+               finished = finished and self.branches.setdefault(transaction[i], Node(transaction[i], self.level + 1, position)).increment(transaction[i+1:], position)
+        return finished and self.suspected == False
 
     def print_node(self):
         for key in self.branches:
@@ -51,7 +56,11 @@ class Root(Node):
         self.suspected = False
         self.position = 0;
         self.level = 0
-
+    
+    def get_large_sets(self):
+        large_sets = {}
+        return large_sets
+        
 
 
 tree = Root()
