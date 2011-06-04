@@ -10,9 +10,9 @@ class Node:
         self.itemset = itemset
         self.counter = 0
         self.branches = {}
-        self.large = None
         self.suspected = None
-        self.large_subsets_counter = 0
+        self.large = None
+        self.size_changed = False
         self.level = level
         self.beginning_position = position
         self.first_pass = True
@@ -35,7 +35,9 @@ class Node:
             self.counter += 1
             if(self.large != True and self.counter >= min_supp_count):
                 self.large = True
-                self.check_supersets()
+                self.size_changed = True
+
+        transaction.sort()
         if self.suspected != None and len(transaction) > 0:
             for i in range(len(transaction)):              
                branches_finished = self.branches.setdefault(transaction[i], Node(transaction[i], self.itemset+transaction[i], self.level + 1, position, self.root)).increment(transaction[i+1:], position)
@@ -50,10 +52,10 @@ class Node:
 
     def print_node(self):           
         print "%s[%s]: [%d, %s, %s]" % (self.itemset, self.item, self.counter, self.suspected, self.large) 
-        for branch in sorted(self.branches.values()):
+        for key in sorted(self.branches.keys()):
             for i in range(self.level+1):
                 print "\t",
-            branch.print_node()
+            self.branches[key].print_node()
 
     def update_node_status(self):
         self.large = False
@@ -82,12 +84,30 @@ class Node:
             supersets.append(branch.get_node(self.itemset))
         return supersets
 
+    def update_child_states(self):
+        for node in self.branches.values():
+            if node.size_changed:
+                node.size_changed = False
+                node.check_supersets()
+            if node.large:
+                node.update_child_states()
+
+    
+    def get_large_sets(self):
+        large_sets = []
+        if(self.large):
+            if(self != self.root):
+                large_sets.append(self.itemset)
+            for node in self.branches.values():
+                large_sets.extend(node.get_large_sets())
+        return large_sets
 
 
 class Root(Node):
     def __init__(self):
         self.counter = 0
         self.branches = {}
+        self.size_changed = False
         self.large = True
         self.suspected = False
         self.position = 0;
@@ -97,17 +117,22 @@ class Root(Node):
         self.item = "*"
         self.itemset = ""
         self.root = self
-    
-    def get_large_sets(self):
-        large_sets = {}
-        return large_sets
 
-    
+
 
 
 tree = Root()
 tr = ['A', 'B', 'C']
+tr2 = ['B', 'A', 'C']
+tr3 = ['B', 'D', 'C', 'A', 'E', 'F']
 tree.increment(tr, 0)
-a = tree.get_node('A')
-ac = a.get_node('C')
+tree.print_node()
+
+tree.increment(tr2, 0)
+tree.print_node()
+
+tree.update_child_states()
+tree.print_node()
+
+tree.increment(tr3, 1)
 tree.print_node()
