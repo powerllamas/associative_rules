@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from trie import node, root
+from trie import Root
 
 class Dic:
     def __init__(self, transactions, minsup, M):
@@ -20,9 +20,11 @@ class Dic:
         i = 0
         while not finished:
             i = (i + 1) % len(self.transactions)
-            position = i / M
+            position = i / self.__M
             finished = root.increment(self.transactions[i], position)
-            if i % M == 0:
+            if i % self.__M == 0:
                 root.tree.update_child_states()
         large_sets = root.get_large_sets()
         return large_sets
+
+    #TODO: return counter somehow

@@ -101,7 +101,17 @@ class Node:
             for node in self.branches.values():
                 large_sets.extend(node.get_large_sets())
         return large_sets
+    
+    
+    def __iter__(self):
+        return TrieIterator(self)
 
+class TrieIterator:
+    def __init__(self):
+        pass
+
+    def next(self):
+        pass
 
 class Root(Node):
     def __init__(self):
@@ -119,20 +129,19 @@ class Root(Node):
         self.root = self
 
 
+if __file__ == '__main__':
+    tree = Root()
+    tr = ['A', 'B', 'C']
+    tr2 = ['B', 'A', 'C']
+    tr3 = ['B', 'D', 'C', 'A', 'E', 'F']
+    tree.increment(tr, 0)
+    tree.print_node()
 
+    tree.increment(tr2, 0)
+    tree.print_node()
 
-tree = Root()
-tr = ['A', 'B', 'C']
-tr2 = ['B', 'A', 'C']
-tr3 = ['B', 'D', 'C', 'A', 'E', 'F']
-tree.increment(tr, 0)
-tree.print_node()
+    tree.update_child_states()
+    tree.print_node()
 
-tree.increment(tr2, 0)
-tree.print_node()
-
-tree.update_child_states()
-tree.print_node()
-
-tree.increment(tr3, 1)
-tree.print_node()
+    tree.increment(tr3, 1)
+    tree.print_node()
