@@ -130,6 +130,7 @@ class Node(object):
     
     
 class Root(Node):
+    __slots__ = ['minsup_count']
     def __init__(self, minsup_count):
         super(Root, self).__init__(item="*", itemset=[], level=0, root=None, position = 0)
 
