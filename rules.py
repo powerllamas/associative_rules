@@ -17,10 +17,10 @@ class RulesGenerator:
                         antecedent = subset
                         conf = RulesGenerator.__get_confidence(large_set, antecedent, counter)
                         if  conf >= minconf:
-                            consequent = RulesGenerator.__tuples_difference(large_set, antecedent)
+                            consequent = tuple(RulesGenerator.__tuples_difference(large_set, antecedent))
                             supp = float(counter[large_set]) / float(len(transactions))
                             rules.append((antecedent, consequent, supp, conf))
-        return rules
+        return sorted(rules)
 
     @staticmethod
     def __get_all_subsets(large_set):

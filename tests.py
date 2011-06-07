@@ -49,6 +49,26 @@ class TestAprioriGen(unittest.TestCase):
         result = Apriori._Apriori__apriori_gen(self.large_set_k3)
         expected = [(3, 4, 5, 7)]
         self.assertEqual(result, expected)
+
+class TestAprioriGetL1(unittest.TestCase):
+
+    def setUp(self):
+        self.counter = {
+                (1,): 3,
+                (2,): 4,
+                (3,): 3,
+                (4,): 2,
+                (5,): 2,
+                (6,): 2,
+                (7,): 6,
+                (8,): 2,
+            }
+        self.minsup_count = 3
+
+    def testAprioriGetL1(self):
+        result = Apriori._Apriori__getL1(self.counter, self.minsup_count)
+        expected = [(1,), (2,), (3,), (7,)]
+        self.assertEqual(result, expected)
         
 class TestRules(unittest.TestCase):
 
