@@ -12,11 +12,10 @@ def main(args):
     stats = Stats()
     transactions = TransactionsList(args.infile)
     if args.algorithm == 'apriori':
-        apriori = Apriori(transactions, args.minsup)
-        large_sets, counter = apriori.get_large_sets_and_counter()
+        algorithm = Apriori(transactions, args.minsup)
     else:
-        dic = Dic(transactions, args.minsup, args.m)
-        large_sets = dic.get_large_sets()
+        algorithm = Dic(transactions, args.minsup, args.m)
+    large_sets, counter = algorithm.get_large_sets_and_counter()
     stats.record_post_large_sets()
     rules = RulesGenerator.generate_rules(large_sets, args.minconf, counter, transactions)
     stats.record_post_rules()

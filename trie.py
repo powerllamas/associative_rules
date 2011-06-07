@@ -127,16 +127,6 @@ class Node:
         return large_sets
     
     
-    def __iter__(self):
-        return TrieIterator(self)
-
-class TrieIterator:
-    def __init__(self):
-        pass
-
-    def next(self):
-        pass
-
 class Root(Node):
     def __init__(self, minsup_count):
         self.counter = 0

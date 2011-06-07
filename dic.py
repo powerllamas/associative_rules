@@ -34,12 +34,29 @@ class Dic:
 
         large_sets = self.root.get_large_sets(large_sets)
         return large_sets
+
+    def get_counter(self):
+        return DicCounter(self.root)
         
     def get_minsup_count(self):
         """
         Calculates and returns miniumum support given in number of transactions.
         """
         return int(len(self.__transactions) * self.__minsup)
+
+    def get_large_sets_and_counter(self):
+        return self.get_large_sets(), self.get_counter()
+
+class DicCounter:
+    def __init__(self, root):
+        self.__root = root
+
+    def __getitem__(self, key):
+        node = self.__root.get_node(key)
+        if node is None:
+            raise KeyError("No key {0} in DicCounter".format(key))
+        else:
+            return node.counter
 
 if __file__ == '__main__':
     from transactions import TransactionsList
