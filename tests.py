@@ -8,14 +8,25 @@ from rules import RulesGenerator
 class TestAprioriGenerateSubsets(unittest.TestCase):
 
     def setUp(self):
-        self.candidate_set = [(1, 2), (2, 9), (1, 4)]
+        self.candidate_set_2 = [(1, 2), (2, 9), (1, 4)]
+        self.candidate_set_3 = [(1, 2, 9), (2, 3, 9), (1, 4, 9)]
+        self.candidate_set_4 = [(1, 2, 3, 7), (2, 3, 8, 9), (1, 2, 3, 4)]
         self.transaction = (1, 2, 3, 7, 8, 9)
 
-    def testGenerateSubsets(self):
-        result = Apriori._Apriori__generate_subsets(self.candidate_set, self.transaction)
+    def testGenerateSubsets2(self):
+        result = Apriori._Apriori__generate_subsets(self.candidate_set_2, self.transaction)
         expected = [(1, 2), (2, 9)]
         self.assertEqual(result, expected)
 
+    def testGenerateSubsets3(self):
+        result = Apriori._Apriori__generate_subsets(self.candidate_set_3, self.transaction)
+        expected = [(1, 2, 9), (2, 3, 9)]
+        self.assertEqual(result, expected)
+
+    def testGenerateSubsets4(self):
+        result = Apriori._Apriori__generate_subsets(self.candidate_set_4, self.transaction)
+        expected = [(1, 2, 3, 7), (2, 3, 8, 9)]
+        self.assertEqual(result, expected)
 
 class TestAprioriGen(unittest.TestCase):
 
@@ -39,7 +50,7 @@ class TestAprioriGen(unittest.TestCase):
         expected = [(3, 4, 5, 7)]
         self.assertEqual(result, expected)
         
-class TestAprioriRules(unittest.TestCase):
+class TestRules(unittest.TestCase):
 
     def setUp(self):
         self.large_sets = {1 : [(1, ), (2, ), (3, ), (4, )],  2 : [(1, 2), (2, 3), (2, 4), (3, 4)], 3 :  [(2, 3, 4)]}
@@ -62,7 +73,7 @@ class TestAprioriRules(unittest.TestCase):
                 (2, 3, 4): 1,
             }
     
-    def testAprioriRules(self):
+    def testRules(self):
         extract = lambda x: (x[0], tuple(x[1]))
         result = RulesGenerator.generate_rules(self.large_sets, self.minconf, self.counter, self.transactions)
         result = [ extract(x) for x in result ]
@@ -77,7 +88,7 @@ class TestAprioriRules(unittest.TestCase):
             ]
         self.assertEqual(result, expected)
         
-class TestGetAllSubsets(unittest.TestCase):
+class TestRulesGetAllSubsets(unittest.TestCase):
 
     def setUp(self):
         self.set = set([1, 2, 3])

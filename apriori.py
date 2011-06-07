@@ -55,7 +55,7 @@ class Apriori:
         for k, v in counter.iteritems():
             if v >= minsup_count:
                 L1.append(k)
-        return L1
+        return sorted(L1)
 
     @staticmethod
     def __is_last_set_empty(large_sets):
