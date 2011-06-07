@@ -2,7 +2,7 @@
 
 from itertools import combinations
 
-class Node:
+class Node(object):
     __slots__ = ['item', 'itemset', 'counter', 'branches', 'suspected', 'large', 'size_changed', 'level', 'first_pass', 'root', 'beginning_position', ]
 
     def __init__(self, item, itemset, level, root, position):
@@ -131,20 +131,14 @@ class Node:
     
 class Root(Node):
     def __init__(self, minsup_count):
-        self.counter = 0
-        self.branches = {}
-        self.size_changed = False
+        super(Root, self).__init__(item="*", itemset=[], level=0, root=None, position = 0)
+
+        self.root = self
         self.large = True
         self.suspected = False
-        self.position = 0;
-        self.level = 0
         self.beginning_position = 0
         self.first_pass = False
-        self.item = "*"
-        self.itemset = []
-        self.root = self
         self.minsup_count = minsup_count
-
 
 if __file__ == '__main__':
     tree = Root(2)

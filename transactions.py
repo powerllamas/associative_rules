@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class TransactionsList:
+class TransactionsList(object):
 
     def __init__(self, filename):
         self.transactions = []

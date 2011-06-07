@@ -3,7 +3,7 @@
 from collections import defaultdict
 from string import Formatter
 
-class Writer:
+class Writer(object):
     __header_template = u"""
 Algorithm:                  {algorithm}
 Data set:                   {infile}

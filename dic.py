@@ -2,7 +2,7 @@
 
 from trie import Root
 
-class Dic:
+class Dic(object):
     def __init__(self, transactions, minsup, M):
         self.__minsup = minsup
         self.__transactions = transactions
@@ -16,12 +16,10 @@ class Dic:
         large_sets = {}
         
         minsup_count = self.get_minsup_count()
-        print minsup_count
         self.root = Root(minsup_count)
         finished = False
         pass_counter = 0
         while not finished:
-            print "pass %d" % (pass_counter)
             for i, transaction in enumerate(self.__transactions):
                 position = i / self.__M
                 if i % self.__M == 0:

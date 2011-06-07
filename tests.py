@@ -69,7 +69,7 @@ class TestAprioriGetL1(unittest.TestCase):
         result = Apriori._Apriori__getL1(self.counter, self.minsup_count)
         expected = [(1,), (2,), (3,), (7,)]
         self.assertEqual(result, expected)
-        
+
 class TestRules(unittest.TestCase):
 
     def setUp(self):

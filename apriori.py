@@ -3,7 +3,7 @@
 from collections import defaultdict
 from itertools import combinations
 
-class Apriori:
+class Apriori(object):
     def __init__(self, transactions, minsup):
         self.__minsup = minsup
         self.__transactions = transactions
