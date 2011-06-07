@@ -3,6 +3,8 @@
 from itertools import combinations
 
 class Node:
+    __slots__ = ['item', 'itemset', 'counter', 'branches', 'suspected', 'large', 'size_changed', 'level', 'first_pass', 'root', 'beginning_position', ]
+
     def __init__(self, item, itemset, level, root, position):
         self.item = item
         self.itemset = itemset

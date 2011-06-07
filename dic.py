@@ -54,7 +54,7 @@ class DicCounter:
     def __getitem__(self, key):
         node = self.__root.get_node(key)
         if node is None:
-            raise KeyError("No key {0} in DicCounter".format(key))
+            raise KeyError(u"No key '{0}' in DicCounter".format(key))
         else:
             return node.counter
 
