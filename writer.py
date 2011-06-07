@@ -5,9 +5,11 @@ from string import Formatter
 
 class Writer:
     __header_template = u"""
+Algorithm:                  {algorithm}
 Data set:                   {infile}
 Minimum support:            {minsup}
 Minimum confidence:         {minconf}
+M:                          {m}
 Number of rules:            {nr_of_rules}
 Memory usage:               {memory_use}
 Total time:                 {real_time}
@@ -50,6 +52,9 @@ Confidence: {confidence}
         self.__data['infile'] = args.infile
         self.__data['minsup'] = args.minsup
         self.__data['minconf'] = args.minconf
+        self.__data['algorithm'] = args.algorithm
+        if args.algorithm == 'dic':
+            self.__data['m'] = args.m
 
     def write(self):
         header = Writer.dictformat(self.__header_template, self.__data)
