@@ -23,15 +23,11 @@ class Node:
              
         if self.suspected:
             self.counter += 1
-
-        #transaction = tuple(sorted(list(transaction_tuple)))
   
         if self.suspected != None and len(transaction) > 0 and self.large:
             for i in range(len(transaction)):              
                if self.branches.get(transaction[i]) == None:                   
-                   newitemset = list()
-                   newitemset.extend(self.itemset)
-                   newitemset.append(transaction[i])
+                   newitemset = self.itemset + tuple(transaction[i])
                    default_new_node = Node(transaction[i], tuple(newitemset), self.level + 1, self.root, position)
                    if default_new_node.check_subsets(position):
                        self.branches.setdefault(transaction[i], default_new_node).increment(transaction[i+1:], position)
@@ -131,11 +127,17 @@ class Node:
         return TrieIterator(self)
 
 class TrieIterator:
-    def __init__(self):
-        pass
+    def __init__(self, trie):
+        self.root = trie
+        
+    def __iter__():
+        return self
 
     def next(self):
-        pass
+        for node in self.root.branches.values():
+            yield node
+            
+            
 
 class Root(Node):
     def __init__(self, minsup_count):
@@ -149,51 +151,37 @@ class Root(Node):
         self.beginning_position = 0
         self.first_pass = False
         self.item = "*"
-        self.itemset = []
+        self.itemset = tuple()
         self.root = self
         self.minsup_count = minsup_count
 
+'''
+tree = Root(2)
+tr = ('A', 'B', 'C')
+tr2 = ('D', 'E')
+tr3 = ('B', 'D', 'C', 'A', 'E', 'F')
 
-if __file__ == '__main__':
-    tree = Root(2)
-    tr = ('A', 'B', 'C')
-    tr2 = ('D', 'E')
-    tr3 = ('B', 'D', 'C', 'A', 'E', 'F')
+tree.increment(tr2, 0)
+tree.print_node()
 
-    tree.increment(tr2, 0)
-    tree.print_node()
+tree.update_child_states(0)
+tree.print_node()
 
-    tree.update_child_states()
-    tree.print_node()
+tree.increment(tr3, 1)
+tree.print_node()
 
-    tree.increment(tr3, 1)
-    tree.print_node()
+tree.update_child_states(0)
 
-    tree.update_child_states(0)
+tree.increment(tr, 0)
+tree.print_node()
 
-    tree.increment(tr, 0)
-    tree.print_node()
+tree.increment(tr2, 0)
+tree.print_node()
 
-    tree.increment(tr2, 0)
-    tree.print_node()
+tree.increment(tr3, 0)
+tree.print_node()
 
-    tree.increment(tr3, 0)
-    tree.print_node()
+finished = tree.update_child_states(1)
+tree.print_node()
 
-    finished = tree.update_child_states(1)
-    tree.print_node()
-    print finished
-
-    tree.increment(tr, 1)
-    tree.print_node()
-
-    tree.increment(tr2, 1)
-    tree.print_node()
-
-    tree.increment(tr3, 1)
-    tree.print_node()
-
-    finished = tree.update_child_states(2)
-    tree.print_node()
-    print finished
-
+'''
