@@ -29,7 +29,7 @@ class Node(object):
         if self.suspected != None and len(transaction) > 0 and self.large:
             for i in range(len(transaction)):              
                if self.branches.get(transaction[i]) == None:                   
-                   newitemset = self.itemset + tuple(transaction[i])
+                   newitemset = self.itemset + (transaction[i],)
                    default_new_node = Node(transaction[i], tuple(newitemset), self.level + 1, self.root, position)
                    if default_new_node.check_subsets(position):
                        self.branches.setdefault(transaction[i], default_new_node).increment(transaction[i+1:], position)
@@ -129,7 +129,7 @@ class Node(object):
 class Root(Node):
     __slots__ = ['minsup_count']
     def __init__(self, minsup_count):
-        super(Root, self).__init__(item="*", itemset=[], level=0, root=None, position = 0)
+        super(Root, self).__init__(item="*", itemset=tuple(), level=0, root=None, position = 0)
 
         self.root = self
         self.large = True
@@ -137,6 +137,9 @@ class Root(Node):
         self.beginning_position = 0
         self.first_pass = False
         self.minsup_count = minsup_count
+
+__file__= '__main__'
+
 
 if __file__ == '__main__':
     tree = Root(2)
@@ -147,14 +150,13 @@ if __file__ == '__main__':
     tree.increment(tr2, 0)
     tree.print_node()
 
-    tree.update_child_states()
+    tree.update_child_states(0)
     tree.print_node()
 
     tree.increment(tr3, 1)
     tree.print_node()
 
-    tree.update_child_states(0)
+    tree.update_child_states(1)
 
     tree.increment(tr, 0)
     tree.print_node()
-
