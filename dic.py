@@ -2,7 +2,7 @@
 
 from trie import Root
 
-class Dic:
+class Dic(object):
     def __init__(self, transactions, minsup, M):
         self.__minsup = minsup
         self.__transactions = transactions
@@ -16,12 +16,10 @@ class Dic:
         large_sets = {}
         
         minsup_count = self.get_minsup_count()
-        print minsup_count
         self.root = Root(minsup_count)
         finished = False
         pass_counter = 0
         while not finished:
-            print "pass %d" % (pass_counter)
             for i, transaction in enumerate(self.__transactions):
                 position = i / self.__M
                 if i % self.__M == 0:
@@ -34,12 +32,29 @@ class Dic:
 
         large_sets = self.root.get_large_sets(large_sets)
         return large_sets
+
+    def get_counter(self):
+        return DicCounter(self.root)
         
     def get_minsup_count(self):
         """
         Calculates and returns miniumum support given in number of transactions.
         """
         return int(len(self.__transactions) * self.__minsup)
+
+    def get_large_sets_and_counter(self):
+        return self.get_large_sets(), self.get_counter()
+
+class DicCounter:
+    def __init__(self, root):
+        self.__root = root
+
+    def __getitem__(self, key):
+        node = self.__root.get_node(key)
+        if node is None:
+            raise KeyError(u"No key '{0}' in DicCounter".format(key))
+        else:
+            return node.counter
 
 if __file__ == '__main__':
     from transactions import TransactionsList

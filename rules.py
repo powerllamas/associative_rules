@@ -2,7 +2,7 @@
 
 from itertools import combinations
 
-class RulesGenerator:
+class RulesGenerator(object):
     def __init__(self):
         pass
 
@@ -20,7 +20,7 @@ class RulesGenerator:
                             consequent = RulesGenerator.__tuples_difference(large_set, antecedent)
                             supp = float(counter[large_set]) / float(len(transactions))
                             rules.append((antecedent, consequent, supp, conf))
-        return rules
+        return sorted(rules, key=lambda rule: (len(rule[0]), rule[0], len(rule[1]), rule[1], rule[2], rule[3]))
 
     @staticmethod
     def __get_all_subsets(large_set):
@@ -32,7 +32,7 @@ class RulesGenerator:
 
     @staticmethod
     def __tuples_difference(large_set, subset):
-        return (x for x in large_set if x not in subset)
+        return tuple(x for x in large_set if x not in subset)
 
     @staticmethod
     def __get_confidence(large_set, antecedent, counter):

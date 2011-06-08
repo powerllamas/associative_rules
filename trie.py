@@ -2,7 +2,9 @@
 
 from itertools import combinations
 
-class Node:
+class Node(object):
+    __slots__ = ['item', 'itemset', 'counter', 'branches', 'suspected', 'large', 'size_changed', 'level', 'first_pass', 'root', 'beginning_position', ]
+
     def __init__(self, item, itemset, level, root, position):
         self.item = item
         self.itemset = itemset
@@ -123,65 +125,36 @@ class Node:
         return large_sets
     
     
-    def __iter__(self):
-        return TrieIterator(self)
-
-class TrieIterator:
-    def __init__(self, trie):
-        self.root = trie
-        
-    def __iter__():
-        return self
-
-    def next(self):
-        for node in self.root.branches.values():
-            yield node
-            
-            
 
 class Root(Node):
+    __slots__ = ['minsup_count']
     def __init__(self, minsup_count):
-        self.counter = 0
-        self.branches = {}
-        self.size_changed = False
+        super(Root, self).__init__(item="*", itemset=[], level=0, root=None, position = 0)
+
+        self.root = self
         self.large = True
         self.suspected = False
-        self.position = 0;
-        self.level = 0
         self.beginning_position = 0
         self.first_pass = False
-        self.item = "*"
-        self.itemset = tuple()
-        self.root = self
         self.minsup_count = minsup_count
 
-'''
-tree = Root(2)
-tr = ('A', 'B', 'C')
-tr2 = ('D', 'E')
-tr3 = ('B', 'D', 'C', 'A', 'E', 'F')
+if __file__ == '__main__':
+    tree = Root(2)
+    tr = ('A', 'B', 'C')
+    tr2 = ('D', 'E')
+    tr3 = ('B', 'D', 'C', 'A', 'E', 'F')
 
-tree.increment(tr2, 0)
-tree.print_node()
+    tree.increment(tr2, 0)
+    tree.print_node()
 
-tree.update_child_states(0)
-tree.print_node()
+    tree.update_child_states()
+    tree.print_node()
 
-tree.increment(tr3, 1)
-tree.print_node()
+    tree.increment(tr3, 1)
+    tree.print_node()
 
-tree.update_child_states(0)
+    tree.update_child_states(0)
 
-tree.increment(tr, 0)
-tree.print_node()
+    tree.increment(tr, 0)
+    tree.print_node()
 
-tree.increment(tr2, 0)
-tree.print_node()
-
-tree.increment(tr3, 0)
-tree.print_node()
-
-finished = tree.update_child_states(1)
-tree.print_node()
-
-'''

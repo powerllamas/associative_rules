@@ -6,7 +6,7 @@ import os
 def is_posix():
     return os.name == 'posix'
 
-class StatsBase:
+class StatsBase(object):
     def __init__(self):
         self.real_time = 0.0
         self.user_time = 0.0
@@ -32,7 +32,7 @@ if is_posix():
 
     Stats = StatsUnix
 else:
-    class StatsWin:
+    class StatsWin(StatsBase):
         def record_post_large_sets(self):
             pass
 
