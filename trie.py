@@ -138,7 +138,7 @@ class Root(Node):
         self.first_pass = False
         self.minsup_count = minsup_count
 
-__file__= '__main__'
+#__file__= '__main__'
 
 
 if __file__ == '__main__':
