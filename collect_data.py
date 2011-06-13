@@ -6,12 +6,13 @@ from dic import Dic
 from stats import Stats
 from rules import RulesGenerator
 
-infiles = ['data/mushroom.dat', 'data/kosarak.dat', 'data/accidents.dat']
+#infiles = ['data/mushroom.dat', 'data/accidents.dat', 'data/kosarak.dat']
+infiles = ['data/accidents.dat', 'data/kosarak.dat']
 
-algorithms = ['dic', 'apriori']
-supports = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.35, 0.3, 0.25]
+algorithms = reversed['dic', 'apriori']
+supports = {'data/mushroom.dat' : [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.35, 0.3, 0.25], 'data/kosarak.dat' : [0.8, 0.6, 0.4, 0.3], 'data/accidents.dat' : [0.8, 0.6, 0.4, 0.3]}
 confidencies = [0.8]
-ms = [125, 250, 500, 1000, 2000, 8124]
+ms = {'data/mushroom.dat' : [125, 250, 500, 1000, 2000, 8124], 'data/kosarak.dat' : [1000, 10000, 100000], 'data/accidents.dat' : [1000, 10000, 100000]}
 
 last_total_time = 0
 last_user_time = 0
@@ -48,10 +49,10 @@ if __name__ == '__main__':
     for infile in infiles:
         transactions = TransactionsList(infile)
         for algorithm in algorithms:
-            for support in supports:
+            for support in supports[infile]:
                 for confidence in confidencies:
                     if algorithm == 'dic':
-                        for m in ms:
+                        for m in ms[infile]:
                             process(infile, algorithm, support, confidence, m)
                     else:
                         process(infile, algorithm, support, confidence, "n/a")
