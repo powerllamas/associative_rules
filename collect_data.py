@@ -9,7 +9,7 @@ from rules import RulesGenerator
 #infiles = ['data/mushroom.dat', 'data/accidents.dat', 'data/kosarak.dat']
 infiles = ['data/accidents.dat', 'data/kosarak.dat']
 
-algorithms = reversed['dic', 'apriori']
+algorithms = ['apriori', 'dic']
 supports = {'data/mushroom.dat' : [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.35, 0.3, 0.25], 'data/kosarak.dat' : [0.8, 0.6, 0.4, 0.3], 'data/accidents.dat' : [0.8, 0.6, 0.4, 0.3]}
 confidencies = [0.8]
 ms = {'data/mushroom.dat' : [125, 250, 500, 1000, 2000, 8124], 'data/kosarak.dat' : [1000, 10000, 100000], 'data/accidents.dat' : [1000, 10000, 100000]}
