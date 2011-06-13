@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 
 from itertools import combinations
@@ -32,10 +31,6 @@ class Node(object):
             if self.suspected:
                 self.counter += 1
             if self.large:
-                if self.counter > self.root.transactions_no:
-                    print "!!!!!!!!!!!!!!!"
-                    self.print_node()
-                    print "!!!!!!!!!!!!!!!"
                 for i in range(len(transaction)):              
                     node = self.branches.get(transaction[i])
                     if node != None:

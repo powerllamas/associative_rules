@@ -53,4 +53,3 @@ if __name__ == '__main__':
                         process(infile, algorithm, support, confidence, m)
                 else:
                     process(infile, algorithm, support, confidence, "n/a")
->>>>>>> 6637a9a5e0711001e2d0e88274b7cf827b46458d
