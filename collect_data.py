@@ -6,12 +6,12 @@ from dic import Dic
 from stats import Stats
 from rules import RulesGenerator
 
-infile = 'data/kosarak.dat'
+infiles = ['data/mushroom.dat', 'data/kosarak.dat', 'data/accidents.dat']
 
-algorithms = ['apriori']
-supports = reversed([0.05, 0.15, 0.25, 0.35])
-confidencies = [0.7]
-ms = [1000, 5000, 25000]
+algorithms = ['dic', 'apriori']
+supports = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.35, 0.3, 0.25]
+confidencies = [0.8]
+ms = [1250, 250, 500, 1000, 2000, 8124]
 
 last_total_time = 0
 last_user_time = 0
@@ -41,15 +41,17 @@ def process(infile, algorithm_name, support, confidence, m):
     memory = stats.memory_use
     rules_no = len(rules)
 
-    print "{algorithm_name}\t{infile}\t{support}\t{confidence}\t{m}\t{rules_no}\t{large_len}\t{memory}\t{total_time}\t{user_time}\t{large_sets_time}".format(**locals())
+    print "{infile}\t{algorithm_name}\t{support}\t{confidence}\t{m}\t{rules_no}\t{large_len}\t{memory}\t{total_time}\t{user_time}\t{large_sets_time}".format(**locals())
 
 if __name__ == '__main__':
-    print "Alg_name\tdataset\tsupp\tconf\tm\trl_no\tlrg_len\tmem\ttot_t\tusr_t\tset_t"
-    for algorithm in algorithms:
-        for support in supports:
-            for confidence in confidencies:
-                if algorithm == 'dic':
-                    for m in ms:
-                        process(infile, algorithm, support, confidence, m)
-                else:
-                    process(infile, algorithm, support, confidence, "n/a")
+    print "dataset\tAlg_name\tsupp\tconf\tm\trl_no\tlrg_len\tmem\ttot_t\tusr_t\tset_t"
+    for infile in infiles:
+        transactions = TransactionsList(infile)
+        for algorithm in algorithms:
+            for support in supports:
+                for confidence in confidencies:
+                    if algorithm == 'dic':
+                        for m in ms:
+                            process(infile, algorithm, support, confidence, m)
+                    else:
+                        process(infile, algorithm, support, confidence, "n/a")
