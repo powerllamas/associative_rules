@@ -11,7 +11,7 @@ infiles = ['data/mushroom.dat', 'data/kosarak.dat', 'data/accidents.dat']
 algorithms = ['dic', 'apriori']
 supports = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.35, 0.3, 0.25]
 confidencies = [0.8]
-ms = [1250, 250, 500, 1000, 2000, 8124]
+ms = [125, 250, 500, 1000, 2000, 8124]
 
 last_total_time = 0
 last_user_time = 0
