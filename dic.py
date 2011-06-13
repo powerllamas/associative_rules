@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
-
 from trie import Root
 from collections import defaultdict
-import math, time
+import math, time, random
 
 class Dic(object):
-    def __init__(self, transactions, minsup, M):
+    def __init__(self, transactions, minsup, M, randomize, partial):
         self.__minsup = minsup
         self.__transactions = transactions
-        self.__M = M
+        if M == 0:
+            self.__M = int(math.ceil(len(transactions) * minsup))
+        elif M < 0:
+            self.__M = -M * int(math.ceil(len(transactions) * minsup))
+        elif M > 0:
+            self.__M = M
         self.__minsup_count = self.__get_minsup_count()
+        self.__randomize = randomize
+        self.__partial = partial
 
     def get_large_sets(self):
         """
@@ -20,28 +26,45 @@ class Dic(object):
         minsup_count = self.__get_minsup_count()
         L1 = self.__getL1(counter, minsup_count)
 
-        self.root = Root(self.__minsup, len(self.__transactions), L1)
+        self.root = Root(self.__minsup, len(self.__transactions), L1, self.__partial)
         self.root.update_states(0, 0)
         
         parts_no = math.ceil(float(len(self.__transactions)) / float(self.__M))
         finished = False
-        pass_counter = 1
+        pass_counter = 0
+        
+        if self.__randomize:
+            transaction_order = random.sample(xrange(len(self.__transactions)), len(self.__transactions))
+        else:
+            transaction_order = xrange(len(self.__transactions))
+        
+        if  self.__partial:
+            M =  self.__M
+        else:
+            M = int(math.ceil(len(self.__transactions) * self.__minsup))
+
+         
         while not finished:
 #            print "pass: %d" % (pass_counter)
-            for i, transaction in enumerate(self.__transactions):
-                position = i / self.__M
+            #for i, transaction in enumerate(self.__transactions):
+            for i in transaction_order:
+                transaction = self.__transactions.get(i)
+                position = i / M
                 self.root.increment(transaction, position)
-                if (i+1) % self.__M == 0 or (i+1) == len(self.__transactions):
+                if (i+1) % M == 0 or (i+1) == len(self.__transactions):
                     #print "\tpart %d" % (position + 1)
-                    trans_in_last_part = (i+1) - position * self.__M
+                    trans_in_last_part = (i+1) - position * M
                     next_position = (position + 1)% parts_no
                     finished = self.root.update_states(next_position, trans_in_last_part)                    
                     if finished:
                         break
+                    M =  self.__M
+            
             pass_counter += 1
 
-        #self.root.print_node(large_only = True)
-        #print "%d passes" % (pass_counter)
+        #self.root.print_node()
+        #print "passes: %d" % (pass_counter,)
+
         large_sets = self.root.get_large_sets(large_sets)
         return large_sets
 
@@ -92,18 +115,18 @@ class DicCounter:
 
 #__file__ = '__main__'
 
-if __file__ == '__main__':
+#if __file__ == '__main__':
 
-    from transactions import TransactionsList
-    transactions = TransactionsList("data\mushroom.dat")
-    dic = Dic(transactions, 0.8, 1000)
-    start = time.clock()
-    ls = dic.get_large_sets()
-    stop = time.clock()
-    elapsed = stop - start
-    count = 0
-    for sets in ls.values():
-        count += len(sets)
-    print "Large sets number: %d" % (count,)
-    print elapsed
-    print ls
+    #from transactions import TransactionsList
+    #transactions = TransactionsList("data\mushroom.dat")
+    #dic = Dic(transactions, 0.8, 1000)
+    #start = time.clock()
+    #ls = dic.get_large_sets()
+    #stop = time.clock()
+    #elapsed = stop - start
+    #count = 0
+    #for sets in ls.values():
+        #count += len(sets)
+    #print "Large sets number: %d" % (count,)
+    #print elapsed
+    #print ls

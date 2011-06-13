@@ -19,18 +19,13 @@ class Node(object):
         self.counted_transactions = 0
         self.finished = False
         self.beginning_position = None
-##        if level == 1:
-##            self.large = False
-##            self.suspected = True
-##            self.beginning_position = 0
-
 
           
     def increment(self, transaction, position):
         if not (self.finished and self.large == False):
             if self.suspected:
                 self.counter += 1
-            if self.large:
+            if self.large or self.root.partial:
                 for i in range(len(transaction)):              
                     node = self.branches.get(transaction[i])
                     if node != None:
@@ -52,7 +47,7 @@ class Node(object):
                 self.finished = self.finished and supersets_finished
 
             if self.is_large():
-                if self.large == False:
+                if True:#self.large == False:
                     self.large = True
                     new_supersets = self.check_subsets_of_supersets()
                     self.finished = self.finished and not new_supersets
@@ -62,18 +57,30 @@ class Node(object):
         return self.finished
 
 
+    #def check_subsets_of_supersets(self):
+        #some = False
+        ##print self.itemset
+        #for key in sorted(self.root.L1):
+            ##if len(self.itemset) > 0 and key == (self.itemset[0],):
+            #if len(self.itemset) > 0 and key[0] >= self.item:
+                #for my_key in sorted(self.root.L1):
+                    #if my_key[0] > self.item:
+                        ##print "\tmk: %s" % (my_key[0])
+                        #new_node, all_subsets_large = self.get_or_set_node(my_key)
+                        #some = some or all_subsets_large
+                #break
+            #else:
+                ##print "\tk: %s" % (key[0])
+                #new_node, all_subsets_large = self.root.get_or_set_node(key + self.itemset)
+                #some = some or all_subsets_large
+        #return some
+        
     def check_subsets_of_supersets(self):
         some = False
-        for key in sorted(self.root.L1):
-            #print "key: %s" % (key,)
-            if len(self.itemset) > 0 and key == self.itemset[0]:
-                for my_key in sorted(self.root.L1):
-                    if my_key > self.item:
-                        new_node, all_subsets_large = self.get_or_set_node(my_key)
-                        some = some or all_subsets_large
-                break
-            new_node, all_subsets_large = self.root.get_or_set_node(key + self.itemset)
-            some = some or all_subsets_large
+        for key in sorted(self.root.L1):            
+            if key[0] > self.item or self == self.root:
+                new_node, all_subsets_large = self.get_or_set_node(key)
+                some = some or all_subsets_large           
         return some
             
 
@@ -115,7 +122,7 @@ class Node(object):
     def get_immediate_subsets(self):
         length = len(self.itemset)
         subsets = combinations(self.itemset, length - 1)
-        return subsets
+        return sorted(subsets)
 
     def start_counting(self):
         self.large = False
@@ -134,14 +141,16 @@ class Node(object):
         return self.counter >= self.get_minsup_count()
 
     def get_minsup_count(self):
-        #minsup_count = self.root.minsup * self.counted_transactions
-        minsup_count = self.root.minsup * self.root.transactions_no
+        if self.root.partial:
+            minsup_count = self.root.minsup * self.counted_transactions
+        else:
+            minsup_count = self.root.minsup * self.root.transactions_no
         #print "%d, minsup: %d" % (self.counted_transactions, minsup_count)
         return minsup_count
 
     
     def get_large_sets(self, large_sets):
-        if self.large:
+        if self.is_large():
             if self != self.root:
                 large_sets.setdefault(len(self.itemset), []).append(self.itemset)
             for node in self.branches.values():
@@ -151,7 +160,7 @@ class Node(object):
     
     def print_node(self, large_only = False, suspected_only = False, level = 0):           
         if (not large_only or self.large) and (not suspected_only or self.suspected) and (self.level <= level or level == 0):
-            print "%s %s[%d, %d, %s, %s]" % (self.item, self.itemset, self.counter, self.counted_transactions, self.suspected, self.large) 
+            print "%s %s[%d, %d, %s, %s, %s]" % (self.item, self.itemset, self.counter, self.counted_transactions, self.suspected, self.large, self.large == self.is_large()) 
             for key in sorted(self.branches.keys()):
                 if (not large_only or self.branches[key].large) and (self.branches[key].level <= level or level == 0) and (not suspected_only or self.branches[key].suspected):
                     for i in range(self.level+1):
@@ -162,9 +171,9 @@ class Node(object):
         self.print_node(large_only, suspected_only, level)
 
 class Root(Node):
-    __slots__ = ['minsup', 'transactions_no', 'L1']
-    def __init__(self, minsup, transactions_no, L1):
-        super(Root, self).__init__(item="*", itemset=tuple(), level=0, root=None)
+    __slots__ = ['minsup', 'transactions_no', 'L1', 'partial']
+    def __init__(self, minsup, transactions_no, L1, partial):
+        super(Root, self).__init__(item="", itemset=tuple(), level=0, root=None)
 
         self.root = self
         self.large = False
@@ -176,47 +185,48 @@ class Root(Node):
         self.minsup = minsup
         self.finished = False
         self.L1 = L1
+        self.partial = partial
 
-##__file__= '__main__'
-##
-##if __file__ == '__main__':
-##    L1 = ('A', 'B', 'C', 'D', 'E', 'F')
-##    tree = Root(0.7, 3, L1)
-##    tr = ('A', 'B', 'C')
-##    tr2 = ('D', 'E')
-##    tr3 = ('A', 'B', 'C', 'D', 'E', 'F')
-##
-####    tree.increment(tr, 0)
-####    tree.print_node()
-####
-####    tree.update_states(1, 1)
-####    tree.print_node()
-####
-####    tree.increment(tr3, 1)
-####    tree.increment(tr, 1)
-####    tree.print_node()
-####
-####    tree.update_states(2, 2)
-####    tree.print_node()
-####    
-####    tree.update_states(0, 1)
-####    tree.print_node()
-##
-##    tree.update_states(0, 0)
-##    tree.print_node()
-##    
-##    tree.increment(tr, 0)
-##    tree.increment(tr3, 0)
-##    tree.increment(tr, 0)
-##    tree.print_node()
-##
-##    tree.update_states(0, 3)
-##    tree.print_node()
-##
-##    tree.increment(tr, 1)
-##    tree.increment(tr3, 1)
-##    tree.increment(tr, 1)
-##    tree.print_node()
-##
-##    tree.update_states(1, 3)
-##    tree.print_node()
+#__file__= '__main__'
+
+#if __file__ == '__main__':
+   #L1 = [('A',), ('B',), ('C',), ('D',)]
+   #tree = Root(0.7, 3, L1)
+   #tr = ('A', 'B', 'C')
+   #tr2 = ('A', 'B', 'C', 'D')
+   #tr3 = ('A', 'B', 'C', 'D', 'E', 'F')
+
+###    tree.increment(tr, 0)
+###    tree.print_node()
+###
+###    tree.update_states(1, 1)
+###    tree.print_node()
+###
+###    tree.increment(tr3, 1)
+###    tree.increment(tr, 1)
+###    tree.print_node()
+###
+###    tree.update_states(2, 2)
+###    tree.print_node()
+###    
+###    tree.update_states(0, 1)
+###    tree.print_node()
+
+   #tree.update_states(0, 0)
+   #tree.print_node()
+   
+   #tree.increment(tr2, 0)
+   #tree.increment(tr2, 0)
+   #tree.increment(tr2, 0)
+   #tree.print_node()
+
+   #tree.update_states(0, 3)
+   #tree.print_node()
+
+   #tree.increment(tr2, 0)
+   #tree.increment(tr2, 0)
+   #tree.increment(tr2, 0)
+   #tree.print_node()
+
+   #tree.update_states(1, 3)
+   #tree.print_node()

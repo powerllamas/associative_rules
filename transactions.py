@@ -14,3 +14,7 @@ class TransactionsList(object):
 
     def __len__(self):
         return len(self.transactions)
+
+    def get(self, index):
+        return self.transactions[index]
+    
