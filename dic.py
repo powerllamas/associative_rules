@@ -27,7 +27,7 @@ class Dic(object):
         L1 = self.__getL1(counter, minsup_count)
 
         self.root = Root(self.__minsup, len(self.__transactions), L1, self.__partial)
-        self.root.update_states(0, 0)
+        self.root.update_states(0)
         
         parts_no = math.ceil(float(len(self.__transactions)) / float(self.__M))
         finished = False
@@ -42,20 +42,17 @@ class Dic(object):
             M =  self.__M
         else:
             M = int(math.ceil(len(self.__transactions) * self.__minsup))
-
-         
+        M =  self.__M
+        
         while not finished:
-#            print "pass: %d" % (pass_counter)
-            #for i, transaction in enumerate(self.__transactions):
+            trans_count = 0
             for i in transaction_order:
                 transaction = self.__transactions.get(i)
-                position = i / M
-                self.root.increment(transaction, position)
+                self.root.increment(transaction)
+                trans_count += 1
                 if (i+1) % M == 0 or (i+1) == len(self.__transactions):
-                    #print "\tpart %d" % (position + 1)
-                    trans_in_last_part = (i+1) - position * M
-                    next_position = (position + 1)% parts_no
-                    finished = self.root.update_states(next_position, trans_in_last_part)                    
+                    finished = self.root.update_states(trans_count)                    
+                    trans_count = 0
                     if finished:
                         break
                     M =  self.__M
@@ -96,11 +93,11 @@ class Dic(object):
         """
         Calculates and returns first large set.
         """
-        L1 = []
+        L1 = {}
         for k, v in counter.iteritems():
-            if v >= minsup_count:
-                L1.append(k)
-        return sorted(L1)    
+            if v >= minsup_count:           
+                L1[k] = v
+        return L1
 
 class DicCounter:
     def __init__(self, root):
@@ -118,8 +115,8 @@ class DicCounter:
 #if __file__ == '__main__':
 
     #from transactions import TransactionsList
-    #transactions = TransactionsList("data\mushroom.dat")
-    #dic = Dic(transactions, 0.8, 1000)
+    #transactions = TransactionsList("data/mushroom.dat")
+    #dic = Dic(transactions, 0.4, 2000, False, False)
     #start = time.clock()
     #ls = dic.get_large_sets()
     #stop = time.clock()

@@ -6,7 +6,8 @@ class TransactionsList(object):
         self.transactions = []
         with open(filename) as file:
             for line in file:
-                transaction = tuple(int(x) for x in line.split())
+                
+                transaction = tuple(int(x) for x in sorted(line.split()))
                 self.transactions.append(transaction)
 
     def __iter__(self):
