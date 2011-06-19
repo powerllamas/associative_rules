@@ -1,0 +1,25 @@
+==============================
+Associative rules induction
+==============================
+
+usage: ar.py [-h] [-a, --algorithm ALGORITHM] [-c, --confidence MINCONF]
+             [-s, --support MINSUP] [-m M]
+             infile [outfile]
+
+Induction of associative rules from datasets.
+
+positional arguments:
+  infile                input file
+  outfile               output file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a, --algorithm ALGORITHM
+                        name of preferred algorithm - apriori or dic
+  -c, --confidence MINCONF
+                        minimum confidence (0..1)
+  -s, --support MINSUP  minimum support (0..1)
+  -m M                  DIC's granularity
+
+For current version check
+'http://github.com/KrzysztofUrban/associative_rules'.

@@ -18,10 +18,24 @@ def process_args():
 
     def dic_granularity(string):
         val = int(string)
-        if val <= 0:
-            raise argparse.ArgumentTypeError(u"DIC's granularity must be positive.")
+        #if val < 0:
+            #raise argparse.ArgumentTypeError(u"DIC's granularity must be positive or 0 for automatic M calculation.")
+        #else:
+            #return val
+        return val
+            
+    def boolean(string):
+        if string == "False":
+            val = False
+        elif string == "True":
+            val = True
         else:
-            return val
+            int_val = int(string)
+            if int_val in (0, 1):
+                val = bool(int_val)
+            else:
+                raise argparse.ArgumentTypeError(u"{0} should be from \"True\" \\ \"False\" or \"0\" \\ \"1\" ".format(string))
+        return bool(val)
 
 
     parser = argparse.ArgumentParser(
@@ -40,6 +54,12 @@ def process_args():
             default='dic',
             help=u"name of preferred algorithm - apriori or dic"
         )
+    parser.add_argument('-r, --randomize',
+            dest='randomize',
+            type=boolean,
+            default='False',
+            help=u"Randomize transactions order or not"
+        )
     parser.add_argument('-c, --confidence',
             dest='minconf',
             type=percent_value,
@@ -56,6 +76,13 @@ def process_args():
             dest="m",
             type=dic_granularity,
             default=100,
-            help=u"DIC's granularity"
+            help=u"DIC's granularity or 0 for automatic (M = transactions number * min support"
         )
+    parser.add_argument('-p, --partial',
+            dest="partial",
+            type=boolean,
+            default=False,
+            help=u"Switches DIC partial aproach: support is calculated using transactions counted till moment of support calculation."
+        )
+     
     return parser.parse_args()

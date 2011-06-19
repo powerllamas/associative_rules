@@ -1,34 +1,66 @@
 # -*- coding: utf-8 -*-
-
 from trie import Root
+from collections import defaultdict
+import math, time, random
 
 class Dic(object):
-    def __init__(self, transactions, minsup, M):
+    def __init__(self, transactions, minsup, M, randomize, partial):
         self.__minsup = minsup
         self.__transactions = transactions
-        self.__M = M
-        self.__minsup_count = self.get_minsup_count()
+        if M == 0:
+            self.__M = int(math.ceil(len(transactions) * minsup))
+        elif M < 0:
+            self.__M = -M * int(math.ceil(len(transactions) * minsup))
+        elif M > 0:
+            self.__M = M
+        self.__minsup_count = self.__get_minsup_count()
+        self.__randomize = randomize
+        self.__partial = partial
 
     def get_large_sets(self):
         """
         Calculates large sets from transactions. Returns dictionary where the key is arity and the value is list of item sets.
         """
         large_sets = {}
+        counter = self.__count_items_in_transactions(self.__transactions)
+        minsup_count = self.__get_minsup_count()
+        L1 = self.__getL1(counter, minsup_count)
+
+        self.root = Root(self.__minsup, len(self.__transactions), L1, self.__partial)
+        self.root.update_states(0)
         
-        minsup_count = self.get_minsup_count()
-        self.root = Root(minsup_count)
+        parts_no = math.ceil(float(len(self.__transactions)) / float(self.__M))
         finished = False
         pass_counter = 0
+        
+        if self.__randomize:
+            transaction_order = random.sample(xrange(len(self.__transactions)), len(self.__transactions))
+        else:
+            transaction_order = xrange(len(self.__transactions))
+        
+        if  self.__partial:
+            M =  self.__M
+        else:
+            M = int(math.ceil(len(self.__transactions) * self.__minsup))
+        M =  self.__M
+        
         while not finished:
-            for i, transaction in enumerate(self.__transactions):
-                position = i / self.__M
-                if i % self.__M == 0:
-                    #print "\tpart %d" % (position)
-                    finished = self.root.update_child_states(position)                    
-                    if finished and (position > 0 or pass_counter > 0):
+            trans_count = 0
+            for i in transaction_order:
+                transaction = self.__transactions.get(i)
+                self.root.increment(transaction)
+                trans_count += 1
+                if (i+1) % M == 0 or (i+1) == len(self.__transactions):
+                    finished = self.root.update_states(trans_count)                    
+                    trans_count = 0
+                    if finished:
                         break
-                self.root.increment(transaction, position)
+                    M =  self.__M
+            
             pass_counter += 1
+
+        #self.root.print_node()
+        #print "passes: %d" % (pass_counter,)
 
         large_sets = self.root.get_large_sets(large_sets)
         return large_sets
@@ -36,14 +68,36 @@ class Dic(object):
     def get_counter(self):
         return DicCounter(self.root)
         
-    def get_minsup_count(self):
+    def get_large_sets_and_counter(self):
+        return self.get_large_sets(), self.get_counter()
+
+    @staticmethod
+    def __count_items_in_transactions(transactions):
+        """
+        Counts items and returns dictionary with them as keys and their count as value.
+        """
+        counter = defaultdict(int)
+        for transaction in transactions:
+            for item in transaction:
+                counter[(item,)] += 1
+        return counter
+
+    def __get_minsup_count(self):
         """
         Calculates and returns miniumum support given in number of transactions.
         """
         return int(len(self.__transactions) * self.__minsup)
 
-    def get_large_sets_and_counter(self):
-        return self.get_large_sets(), self.get_counter()
+    @staticmethod
+    def __getL1(counter, minsup_count):
+        """
+        Calculates and returns first large set.
+        """
+        L1 = {}
+        for k, v in counter.iteritems():
+            if v >= minsup_count:           
+                L1[k] = v
+        return L1
 
 class DicCounter:
     def __init__(self, root):
@@ -56,8 +110,20 @@ class DicCounter:
         else:
             return node.counter
 
-if __file__ == '__main__':
-    from transactions import TransactionsList
-    transactions = TransactionsList("data\mushroom.dat")
-    dic = Dic(transactions, 0.8, 500)
-    #dic.get_large_sets()
+#__file__ = '__main__'
+
+#if __file__ == '__main__':
+
+    #from transactions import TransactionsList
+    #transactions = TransactionsList("data/mushroom.dat")
+    #dic = Dic(transactions, 0.4, 2000, False, False)
+    #start = time.clock()
+    #ls = dic.get_large_sets()
+    #stop = time.clock()
+    #elapsed = stop - start
+    #count = 0
+    #for sets in ls.values():
+        #count += len(sets)
+    #print "Large sets number: %d" % (count,)
+    #print elapsed
+    #print ls
