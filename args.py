@@ -12,7 +12,7 @@ def process_args():
 
     def algorithm_name(string):
         if string.lower() not in ('apriori', 'dic'):
-            raise argparse.ArgumentTypeError("uNo algorithm named {0} is known.".format(string))
+            raise argparse.ArgumentTypeError(u"No algorithm named {0} is known.".format(string))
         else:
             return string.lower()
 
@@ -40,7 +40,7 @@ def process_args():
 
     parser = argparse.ArgumentParser(
             description=u"Induction of associative rules from datasets.",
-            epilog=u"For current version check 'http://github.com/KrzysztofUrban/associative_rules'."
+            epilog=u"For current version check 'http://github.com/PowerLlamas/associative_rules'."
         )
     parser.add_argument('infile',
             help=u"input file")
